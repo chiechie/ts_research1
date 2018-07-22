@@ -8,9 +8,9 @@ import pandas as pd
 import numpy as np
 
 # My Library
-from bkdata.commons.path_ import split_dir, saveDF
+from common.path_helper import split_dir, saveDF
+from settings import Config_json, get_user_data_dir
 from step1_dataIO import load_level_df
-from gaojian.settings import Config_json, get_user_data_dir
 
 config_json = Config_json()
 root_dir = get_user_data_dir()
@@ -33,34 +33,30 @@ trainSetNum = 900
 testSetNum = 600
 
 
-def spread_crossing(a):
+def spread_crossing(a, encode_dict):
     """
     :param P1: price object contains bid/ask
     :param P2: price object contains bid/ask
     :return: spread_crossing of p1, p2,i.e,p2 - p1
     """
     P1_ask, P1_bid, P2_ask, P2_bid = a
-    encode_dict = config_json.get_config("LABEL_CODE_DICT")
     if P2_bid - P1_ask > 0:
-        return encode_dict["upward"]
+        # "upward"
+        return 1
     elif P2_ask - P1_bid < 0:
-        return encode_dict["downward"]
+        # "downward"
+        return -1
     else:
-        return encode_dict["stable"]
+        # "stable"
+        return 0
 
 
-
-
-#Features representation
-##Basic Set
-###V1: price and volume (10 levels)
-N_LEVELS = 10
 # useful_columes = ['askPrice1', 'askPrice2', 'askPrice3', 'askPrice4', 'askPrice5',
 #                   'askVolume1', 'askVolume2', 'askVolume3', 'askVolume4', 'askVolume5',
 #                   'bidPrice1', 'bidPrice2', 'bidPrice3', 'bidPrice4', 'bidPrice5',
 #                   'bidVolume1', 'bidVolume2', 'bidVolume3', 'bidVolume4', 'bidVolume5']
 
-#u'b4_price', u'b5_price',b3_volume
+N_LEVELS = 10
 ask_price_level_format = "a%s_price"
 ask_volume_level_format = "a%s_volume"
 bid_price_level_format = "b%s_price"
@@ -74,16 +70,20 @@ useful_columns = [ask_price_level_format % level for level in range(1, N_LEVELS+
     [bid_price_level_format % level for level in range(1, N_LEVELS+1)] + \
     [bid_volume_level_format % level for level in range(1, N_LEVELS+1)]
 
+
 def makeX(dataSet):
+    # Features representation
+    ##Basic Set
+    ###V1: price and volume (10 levels)
     featV1 = dataSet[useful_columns].values
     featV1_column = useful_columns
     assert len(featV1_column) == featV1.shape[1]
 
     ##Time-insensitive Set
     ###V2: bid-ask spread and mid-prices
-    temp1 = featV1[:, 0:N_LEVELS] - featV1[:, N_LEVELS*2: N_LEVELS * 3]
-    temp2 = (featV1[:, 0:N_LEVELS] + featV1[:, N_LEVELS*2:N_LEVELS * 3]) * 0.5
-    featV2 = np.column_stack((temp1, temp2))
+    bid_ask_spread = featV1[:, 0:N_LEVELS] - featV1[:, N_LEVELS * 2: N_LEVELS * 3]
+    mid_prices = (featV1[:, 0:N_LEVELS] + featV1[:, N_LEVELS * 2:N_LEVELS * 3]) * 0.5
+    featV2 = np.column_stack((bid_ask_spread, mid_prices))
     featV2_column = [bid_ask_spread_format % level for level in range(1, N_LEVELS+1)] + \
         [mid_prices_format % level for level in range(1, N_LEVELS+1)]
     assert len(featV2_column) == featV2.shape[1]
@@ -102,7 +102,6 @@ def makeX(dataSet):
                      [ask_price_diff1_format % level for level in range(1, N_LEVELS)] + \
                     [bid_price_diff1_format % level for level in range(1, N_LEVELS)]
     assert len(featV3_column) == featV3.shape[1]
-
 
     ###V4: mean prices and volumns
     ask_price_mean = np.mean(featV1[:, 0:N_LEVELS], 1)
@@ -123,7 +122,7 @@ def makeX(dataSet):
     assert len(featV5_column) == featV5.shape[1]
 
 
-    ##Time-insensitive Set
+    ##Time-sensitive Set
     ###V6: price and volume derivatives
     ask_price_derive = featV1[1:, 0:N_LEVELS] - featV1[:-1, 0:N_LEVELS]
     bid_price_derive = featV1[1:, N_LEVELS * 2:N_LEVELS * 3] - featV1[:-1, N_LEVELS * 2:N_LEVELS * 3]
@@ -229,16 +228,8 @@ def makeY(dataSet):
     return labels
 
 if __name__ == "__main__":
-    # root_path = u'/Users/stellazhao/research_space/gaojian/test_data/'
-    # file_names = [u"0702SH600000.csv", u"0703SH600000.csv",
-    #               u"0704SH600000.csv", u"0705SH600000.csv",
-    #               u"0706SH600000.csv", u"0709SH600000.csv",
-    #               u"0710SH600000.csv", u"0711SH600000.csv",
-    #               u"0712SH600000.csv", u"0713SH600000.csv",
-    #               u"0714SH600000.csv"]
     file_names = [join(input_dir, i) for i in listdir(input_dir) if ".csv" in i]
     for path in file_names:
-        print path
         dataSet = load_level_df(path)
         feature_value, feature_name = makeX(dataSet=dataSet)
         label = makeY(dataSet=dataSet)
