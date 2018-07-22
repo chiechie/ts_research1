@@ -19,7 +19,7 @@ cd ./ts_research1/
 -- test_data
 |   --labeled_data
 |   --order_book_DB
-|   +--step2_model_data
+|   --step2_model_data
 ```
 3. 
 ```bash
