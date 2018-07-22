@@ -33,7 +33,7 @@ trainSetNum = 900
 testSetNum = 600
 
 
-def spread_crossing(a, encode_dict):
+def spread_crossing(a):
     """
     :param P1: price object contains bid/ask
     :param P2: price object contains bid/ask
@@ -147,22 +147,24 @@ def makeX(dataSet):
     assert len(featV6_column) == featV6.shape[1]
 
     ###V7: average intensity of each type
-    ask_lambda_limit = np.sum(featV1[:, N_LEVELS:N_LEVELS*2], axis=1)
-    bid_lambda_limit = np.sum(featV1[:, N_LEVELS*3:N_LEVELS*4], axis=1)
+    cancel_ask_volume = dataSet["cancel_ask_volume"]
+    cancel_bid_volume = dataSet["cancel_bid_volume"]
+    total_volume = dataSet["total_volume"]
+    current_ask_volume = dataSet["current_ask_volume"]
+    current_bid_volume = dataSet["current_bid_volume"]
 
-    ask_lambda_market = featV1[:, N_LEVELS]
-    bid_lambda_market = featV1[:, N_LEVELS * 3]
+    ask_lambda_cancel = cancel_ask_volume.diff().fillna(-999)
+    bid_lambda_cancel = cancel_bid_volume.diff().fillna(-999)
 
-    ask_lambda_cancel = dataSet["cancel_ask_volume"]
-    bid_lambda_cancel = dataSet["cancel_bid_volume"]
+    total_lambda = total_volume.diff().fillna(-999)
+    ask_lambda_limit = total_lambda + cancel_ask_volume + current_ask_volume.diff().fillna(-999)
+    bid_lambda_limit = total_lambda + cancel_bid_volume + current_bid_volume.diff().fillna(-999)
 
-    featV7 = np.column_stack([ask_lambda_limit, bid_lambda_limit,
-                              ask_lambda_market, bid_lambda_market,
-                              ask_lambda_cancel, bid_lambda_cancel])
+    featV7 = np.column_stack([ask_lambda_cancel, bid_lambda_cancel,
+                              total_lambda, ask_lambda_limit, bid_lambda_limit])
 
-    featV7_column = ["ask_lambda_limit", "bid_lambda_limit",
-                              "ask_lambda_market", "bid_lambda_market",
-                              "ask_lambda_cancel", "bid_lambda_cancel"]
+    featV7_column = ["ask_lambda_cancel", "bid_lambda_cancel",
+                              "total_lambda", "ask_lambda_limit", "bid_lambda_limit"]
     assert len(featV7_column) == featV7.shape[1]
     print("featV7_shape", featV7.shape)
 
@@ -178,31 +180,25 @@ def makeX(dataSet):
     bid_lambda_limit_T2 = pd.Series(bid_lambda_limit).rolling(window=DELTA_T1_POINTS).mean().fillna(0)
     lambda_lb_index = (bid_lambda_limit_T1 > bid_lambda_limit_T2).astype(int).values
 
-    ask_lambda_market_T1 = pd.Series(ask_lambda_market).rolling(window=DELTA_T1_POINTS).mean().fillna(0)
-    ask_lambda_market_T2 = pd.Series(ask_lambda_market).rolling(window=DELTA_T1_POINTS).mean().fillna(0)
-    lambda_ma_index = (ask_lambda_market_T1 > ask_lambda_market_T2).astype(int).values
+    ask_lambda_market_T1 = pd.Series(total_lambda).rolling(window=DELTA_T1_POINTS).mean().fillna(0)
+    ask_lambda_market_T2 = pd.Series(total_lambda).rolling(window=DELTA_T1_POINTS).mean().fillna(0)
+    total_lambda_index = (ask_lambda_market_T1 > ask_lambda_market_T2).astype(int).values
 
-    bid_lambda_market_T1 = pd.Series(bid_lambda_market).rolling(window=DELTA_T1_POINTS).mean().fillna(0)
-    bid_lambda_market_T2 = pd.Series(bid_lambda_market).rolling(window=DELTA_T1_POINTS).mean().fillna(0)
-    lambda_mb_index = (bid_lambda_market_T1 > bid_lambda_market_T2).astype(int).values
-
-    featV8 = np.column_stack((lambda_la_index, lambda_lb_index, lambda_ma_index, lambda_mb_index))
-    featV8_column = ["lambda_la_index", "lambda_lb_index", "lambda_ma_index", "lambda_ma_index"]
+    featV8 = np.column_stack((lambda_la_index, lambda_lb_index, total_lambda_index, ))
+    featV8_column = ["lambda_la_index", "lambda_lb_index", "lambda_m_index", ]
     assert len(featV8_column) == featV8.shape[1]
     print("featV8_shape", featV8.shape)
 
     ###V9: accelerations(market/limit)
-    ma_derive = np.diff(ask_lambda_market)
-    lb_derive = np.diff(bid_lambda_limit)
-
-    mb_derive = np.diff(bid_lambda_market)
     la_derive = np.diff(ask_lambda_limit)
-    featV9 = np.zeros((featV1.shape[0], 4))
-    featV9[1:, :] = np.column_stack((ma_derive, lb_derive, mb_derive, la_derive))
-    featV9_column = ["lambda_ma_derive",
+    lb_derive = np.diff(bid_lambda_limit)
+    m_derive = np.diff(total_lambda)
+    featV9 = np.zeros((featV1.shape[0], 3))
+    featV9[1:, :] = np.column_stack((la_derive, lb_derive, m_derive))
+    featV9_column = ["lambda_la_derive",
                      "lambda_lb_derive",
-                     "lambda_mb_derive",
-                     "lambda_la_derive"]
+                     "lambda_total_derive",
+                     ]
     assert len(featV9_column) == featV9.shape[1]
 
     ##combining the features

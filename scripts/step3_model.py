@@ -42,7 +42,7 @@ output_dir = join(root_dir, config_json.get_config("STEP2_DATA_SUBDIR"))
 def fit_sequence(X , Y):
     Y_hat = np.zeros(Y.shape[0])
     id_train = 1
-    for end_idx in range(Train_size, X.shape[0] - 1, 60):
+    for end_idx in range(Train_size, X.shape[0] - 1, 60 * 60 // 3):
         begin = time.time()
         trainX = X.copy()[end_idx-Train_size:end_idx]
         trainY = Y.copy()[end_idx-Train_size:end_idx]
