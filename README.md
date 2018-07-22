@@ -16,14 +16,14 @@ cd ./ts_research1/
 'shihuanzhao': '/Users/stellazhao/tencent_workplace/labgit/dataming/ts_research1/test_data/',
 该路径下目录结构默认如下设置：
 ```
-+-- test_data
-|   +--labeled_data
-|   +--rder_book_DB
-|   +--step2_model_data
+-- test_data
+|   --labeled_data
+|   --order_book_DB
+|   --step2_model_data
 ```
 3. 
 ```bash
-export PYTHONPATH$pwd
+export PYTHONPATH=$pwd
 python scripts/step2_makeXY.py
 python scripts/step3_model.py
 ```
