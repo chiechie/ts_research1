@@ -7,10 +7,8 @@ from collections import OrderedDict
 import os
 
 default_config = {}
-
 addition_config = {}
 
-pre = "test_ts"
 pre = '.'
 def get_user_data_dir():
     config_json = Config_json()
@@ -27,39 +25,20 @@ def get_user_data_dir():
 
 override_config = {
     'ENV_TYPE': 'TEST',
-    'WORKING_DIR': '/data/home/user00/shield/',
-    'SPLIT_SYMBOL': '|',
-    'TRANS_SWITCH_NAME': True,
-    'TRANS_SWITCH_PINYIN': False,
-    'TRANS_SWITCH_PINYIN_WITH_TONE': False,
-    'MATCH_SWITCH_SUBSTRING_NAME': True,
-    'MATCH_SWITCH_COMMONSTRING': True,
-    'WORK_MODE': 'NAMELIST',
-    'LOCAL_UDF_DATA_DIR': {
-        'shihuanzhao': '/Users/stellazhao/tencent_workplace/labgit/dataming/opsai-monitor/gaojian/test_data/',
-        },
-
     ##PATH CONFIG
+    'LOCAL_UDF_DATA_DIR': {
+        'shihuanzhao': '/Users/stellazhao/tencent_workplace/labgit/dataming/ts_research1/test_data/',
+        },
     "REMOTE_DATA_DIR": "/data/mapleleaf/shihuan/",
-
     "original_data": pre + "/order_book_DB",
-
     "STEP1_DATA_SUBDIR": pre + "/labeled_data/",
     "STEP1_PIC_SUBDIR": pre + "/step1_labeled_data_pic/",
 
     "STEP2_DATA_SUBDIR": pre + "/step2_model_data",
     "STEP2_PIC_SUBDIR": pre + "/step2_transform_pic",
 
-    "STEP3_DATA_SUBDIR": pre + "/step3_curve_class_data/curve_feature",
-
-    "STEP4_1_DATA_SUBDIR": pre + "/step4_1_humancheck_data",
-    "STEP4_1_PIC_SUBDIR": pre + "/step4_1_humancheck_pic",
-
-    "STEP4_2_DATA_COMBINE_XY": pre + "/step4_2_combineXY_data",
-    "STEP4_3_MODEL_CLF": pre + "/step4_3_clf_model",
-
     ##ENV CONFIG
-    # "ENV": "REMOTE",
+    #"ENV": "REMOTE",
     "ENV": "LOCAL",
 
     ## ALGORITHM PARAMETERS
@@ -68,12 +47,6 @@ override_config = {
               "downward": -1,
               "stable": 0
               },
-
-    ########end by shihuanzhao
-    'SUM_AYS_WINDOW_LEN': 6,
-    'STD_AYS_WINDOW_LEN': 6,
-    'BLOCK_AYS_WINDOW_LEN': 3,
-    'MAD_WINDOW': 20
 }
 
 
