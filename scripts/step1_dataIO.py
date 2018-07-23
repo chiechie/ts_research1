@@ -15,7 +15,7 @@ def delete_useless_column(df):
 
 def load_level_df(path):
     df = pd.read_csv(path)
-    df.rename(columns={"bid_price": "b1_price"}, inplace=True)
+    df.rename(columns={"bid_level": "b1_price"}, inplace=True)
     df["timestamp"] = df["date"] + " " + df["time"]
     ## for morning
     df1 = df[(df["time"] >= "09:30:00") & (df["time"] <= "11:30:00")]
@@ -25,7 +25,7 @@ def load_level_df(path):
     print(df1.head())
 
     ## for afternoon
-    df2 = df[(df["time"] >= "14:00:00") & (df["time"] <= "16:00:00")]
+    df2 = df[(df["time"] >= "13:00:00") & (df["time"] <= "15:00:00")]
     df2["timestamp"] = df2["timestamp"].map(pd.to_datetime)
     df2 = df2.set_index("timestamp")
     df2 = df2.resample("3S").bfill()

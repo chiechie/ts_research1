@@ -145,10 +145,9 @@ if __name__ == "__main__":
         Y_hat = fit_sequence(X.copy(), Y.copy())
         from sklearn.metrics.classification import classification_report
         print(df_name)
-        print(classification_report(Y[TICK_SEC + DELTA_T2_POINTS:], Y_hat[TICK_SEC + DELTA_T2_POINTS:]))
-        print("%s%s%s" % ("#"*10, "confusion_matrix for train set",
-                        "#"*10))
-        print(confusion_matrix(Y[TICK_SEC + DELTA_T2_POINTS:-PREDICT_LENGTH_POINTS], Y_hat[TRAIN_POINTS + DELTA_T2_POINTS:- PREDICT_LENGTH_POINTS]))
+        print(classification_report(Y[TRAIN_POINTS + DELTA_T2_POINTS:], Y_hat[TRAIN_POINTS + DELTA_T2_POINTS:]))
+        print("%s%s%s" % ("#"*10, "confusion_matrix for train set", "#"*10))
+        print(confusion_matrix(Y[TRAIN_POINTS + DELTA_T2_POINTS:-PREDICT_LENGTH_POINTS], Y_hat[TRAIN_POINTS + DELTA_T2_POINTS:- PREDICT_LENGTH_POINTS]))
         df["pred"] = Y_hat
         _dir, _filename = split_dir(df_name)
         out_path = join(output_dir, _filename)
