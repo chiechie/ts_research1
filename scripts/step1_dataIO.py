@@ -25,7 +25,7 @@ def load_level_df(path):
     print(df1.head())
 
     ## for afternoon
-    df2 = df[(df["time"] >= "14:00:00") & (df["time"] <= "16:00:00")]
+    df2 = df[(df["time"] >= "13:00:00") & (df["time"] <= "15:00:00")]
     df2["timestamp"] = df2["timestamp"].map(pd.to_datetime)
     df2 = df2.set_index("timestamp")
     df2 = df2.resample("3S").bfill()
