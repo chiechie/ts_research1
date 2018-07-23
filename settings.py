@@ -47,6 +47,14 @@ override_config = {
               "downward": -1,
               "stable": 0
               },
+    "PREDICT_LENGTH_POINTS": 15,
+    "DELTA_T1_POINTS": 10,
+    "DELTA_T2_POINTS": 900,
+    "TRAIN_POINTS": 1500,
+    "TICK_SEC": 3,
+    "TRAIN_UPDATE_SEC": 60 * 60,
+
+
 }
 
 

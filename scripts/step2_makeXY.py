@@ -2,7 +2,6 @@
 # Standard library
 from os.path import join
 from os import listdir
-import os
 # Third Party Library
 import pandas as pd
 import numpy as np
@@ -14,23 +13,13 @@ from step1_dataIO import load_level_df
 
 config_json = Config_json()
 root_dir = get_user_data_dir()
-print(root_dir)
-if root_dir.startswith("/data"):
-    ENV = "REMOTE"
-else:
-    ENV = "LOCAL"
-DEBUG = False if ENV == "REMOTE" else True
-
-### input
 input_dir = join(root_dir, config_json.get_config("original_data"))
-print("root_dir ", input_dir)
-## output
 output_dir = join(root_dir, config_json.get_config("STEP1_DATA_SUBDIR"))
-
-
 #global parameter for model
-trainSetNum = 900
-testSetNum = 600
+DELTA_T2_POINTS = config_json.get_config("DELTA_T2_POINTS")
+DELTA_T1_POINTS = config_json.get_config("DELTA_T1_POINTS")
+###make spread_crossing labels
+delta_Events = config_json.get_config("PREDICT_LENGTH_POINTS")
 
 
 def spread_crossing(a):
@@ -168,8 +157,7 @@ def makeX(dataSet):
     print("featV7_shape", featV7.shape)
 
     ###V8: relative intensity indicators
-    DELTA_T1_POINTS = 10
-    DELTA_T2_POINTS = 900
+
 
     ask_lambda_limit_T1 = pd.Series(ask_lambda_limit).rolling(window=DELTA_T1_POINTS).mean().fillna(0)
     ask_lambda_limit_T2 = pd.Series(ask_lambda_limit).rolling(window=DELTA_T2_POINTS).mean().fillna(0)
@@ -206,10 +194,6 @@ def makeX(dataSet):
             featV6_column + featV7_column + featV8_column + featV9_column
     return feat, feat_name
 
-###make spread_crossing labels
-delta_T = 45 # 60secs
-Freq = 3 # secs
-delta_Events = delta_T // Freq
 
 
 def makeY(dataSet):
