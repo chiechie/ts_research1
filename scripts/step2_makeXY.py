@@ -121,7 +121,6 @@ def makeX(dataSet):
     featV5_column = ["price_spread_sum", "volume_spread_sum"]
     assert len(featV5_column) == featV5.shape[1]
 
-
     ##Time-sensitive Set
     ###V6: price and volume derivatives
     ask_price_derive = featV1[1:, 0:N_LEVELS] - featV1[:-1, 0:N_LEVELS]
@@ -208,7 +207,7 @@ def makeX(dataSet):
     return feat, feat_name
 
 ###make spread_crossing labels
-delta_T = 60 # 60secs
+delta_T = 45 # 60secs
 Freq = 3 # secs
 delta_Events = delta_T // Freq
 
