@@ -17,9 +17,9 @@ def get_user_data_dir():
     elif os.getcwd().startswith('/data/mapleleaf'):
         LOCAL_UDF_DATA_DIR = config_json.get_config('REMOTE_DATA_DIR')
     else:
-        print 'get_user_data_dir error '
+        print('get_user_data_dir error ')
         LOCAL_UDF_DATA_DIR = ''
-    print 'your local data dir prefix is: %s' % (LOCAL_UDF_DATA_DIR)
+    print('your local data dir prefix is: %s' % (LOCAL_UDF_DATA_DIR))
     return LOCAL_UDF_DATA_DIR
 
 
@@ -27,15 +27,15 @@ override_config = {
     'ENV_TYPE': 'TEST',
     ##PATH CONFIG
     'LOCAL_UDF_DATA_DIR': {
-        'windows_desk': r'../test_data/',
+        'windows_desk': r'C:/Users/Jiangliuer/Desktop/Project/python/6.ts_research1/test_data/',
         },
     "REMOTE_DATA_DIR": "/data/mapleleaf/shihuan/",
-    "original_data": pre + "/data",
+    "original_data": pre + "/data/",
     "STEP1_DATA_SUBDIR": pre + "/labeled_data/",
     "STEP1_PIC_SUBDIR": pre + "/step1_labeled_data_pic/",
 
-    "STEP2_DATA_SUBDIR": pre + "/step2_model_data",
-    "STEP2_PIC_SUBDIR": pre + "/step2_transform_pic",
+    "STEP2_DATA_SUBDIR": pre + "/step2_model_data/",
+    "STEP2_PIC_SUBDIR": pre + "/step2_transform_pic/",
 
     ##ENV CONFIG
     #"ENV": "REMOTE",
@@ -61,8 +61,8 @@ override_config = {
 def get_addition_cfg(biz_id, case_type):
     try:
         res = addition_config[biz_id][case_type]
-    except Exception, e:
-        # print '[CONFIG] got empty addition cfg'
+    except Exception as e:
+        # print('[CONFIG] got empty addition cfg')
         res = {}
     return res
 

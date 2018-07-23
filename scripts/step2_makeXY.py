@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 
 # My Library
-from common.path_helper import split_dir, saveDF
+from path_helper import split_dir, saveDF
 from settings import Config_json, get_user_data_dir
 from step1_dataIO import load_level_df
 
@@ -58,7 +58,6 @@ useful_columns = [ask_price_level_format % level for level in range(1, N_LEVELS+
     [ask_volume_level_format % level for level in range(1, N_LEVELS+1)] + \
     [bid_price_level_format % level for level in range(1, N_LEVELS+1)] + \
     [bid_volume_level_format % level for level in range(1, N_LEVELS+1)]
-
 
 def makeX(dataSet):
     # Features representation
@@ -209,6 +208,7 @@ def makeY(dataSet):
 if __name__ == "__main__":
     file_names = [join(input_dir, i) for i in listdir(input_dir) if ".csv" in i]
     for path in file_names:
+        print(path)
         dataSet = load_level_df(path)
         feature_value, feature_name = makeX(dataSet=dataSet)
         label = makeY(dataSet=dataSet)
@@ -216,5 +216,6 @@ if __name__ == "__main__":
         df["label"] = label
         df["label"] = df["label"].astype(int)
         _dir, _filename = split_dir(path)
+        print("test", output_dir, _filename)
         out_path = join(output_dir, _filename)
         saveDF(df, out_path)

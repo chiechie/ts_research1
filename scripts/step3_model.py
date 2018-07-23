@@ -12,7 +12,7 @@ from sklearn.multiclass import OneVsRestClassifier
 from sklearn.svm import SVC
 from sklearn.preprocessing import RobustScaler
 # My Library
-from common.path_helper import saveDF, readDF, split_dir
+from path_helper import saveDF, readDF, split_dir
 from settings import Config_json, get_user_data_dir
 
 config_json = Config_json()
@@ -106,11 +106,11 @@ def model_train(X, Y):
                        verbose=0, cv=CV, n_jobs=N_jobs)
     Y = np.array(Y.values, dtype=int).squeeze()
     CLF.fit(X, Y.reshape(-1, 1))
-    print 'best params:\n', CLF.best_params_
+    print('best params:\n', CLF.best_params_)
     mean_scores = np.array(CLF.cv_results_['mean_test_score'])
-    print 'mean score', mean_scores
-    print 'best score', CLF.best_score_
-    print 'worst score', np.min(mean_scores)
+    print('mean score', mean_scores)
+    print('best score', CLF.best_score_)
+    print('worst score', np.min(mean_scores))
     clf = CLF.best_estimator_
     return clf, X.columns
 
@@ -137,18 +137,19 @@ def heldout_score(clf, X, Y):
 
 if __name__ == "__main__":
     df_list = [join(input_dir, i) for i in listdir(input_dir) if ".csv" in i]
-    for df_name in df_list[:1]:
+    print(df_list)
+    for df_name in df_list:
         df = readDF(df_name)
         Y = df["label"]
         X = df.copy()
         del X["label"]
         Y_hat = fit_sequence(X.copy(), Y.copy())
-        from sklearn.metrics.classification import classification_report
-        print(df_name)
-        print(classification_report(Y[TICK_SEC + DELTA_T2_POINTS:], Y_hat[TICK_SEC + DELTA_T2_POINTS:]))
-        print("%s%s%s" % ("#"*10, "confusion_matrix for train set",
-                        "#"*10))
-        print(confusion_matrix(Y[TICK_SEC + DELTA_T2_POINTS:-PREDICT_LENGTH_POINTS], Y_hat[TRAIN_POINTS + DELTA_T2_POINTS:- PREDICT_LENGTH_POINTS]))
+
+        # print(df_name)
+        # print(classification_report(Y[TICK_SEC + DELTA_T2_POINTS:], Y_hat[TICK_SEC + DELTA_T2_POINTS:]))
+        # print("%s%s%s" % ("#"*10, "confusion_matrix for train set",
+        #                 "#"*10))
+        # print(confusion_matrix(Y[TICK_SEC + DELTA_T2_POINTS:-PREDICT_LENGTH_POINTS], Y_hat[TRAIN_POINTS + DELTA_T2_POINTS:- PREDICT_LENGTH_POINTS]))
         df["pred"] = Y_hat
         _dir, _filename = split_dir(df_name)
         out_path = join(output_dir, _filename)

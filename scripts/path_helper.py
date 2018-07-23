@@ -12,7 +12,7 @@ import pandas as pd
 def mkdir_p(path):
     try:
         makedirs(path)
-        print("[mkdir_p]", path
+        print("[mkdir_p]", path)
     except OSError as exc:
         # Python >2.5 (except OSError, exc: for Python <2.5)
         if exc.errno == errno.EEXIST and isdir(path):
