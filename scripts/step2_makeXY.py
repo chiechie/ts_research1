@@ -137,14 +137,15 @@ def makeX(dataSet):
     ###V7: average intensity of each type
     cancel_ask_volume = dataSet["cancel_ask_volume"]
     cancel_bid_volume = dataSet["cancel_bid_volume"]
-    total_volume = dataSet["total_volume"]
+
     current_ask_volume = dataSet["current_ask_volume"]
     current_bid_volume = dataSet["current_bid_volume"]
-
     ask_lambda_cancel = cancel_ask_volume.diff().fillna(-999)
     bid_lambda_cancel = cancel_bid_volume.diff().fillna(-999)
 
+    total_volume = dataSet["total_volume"]
     total_lambda = total_volume.diff().fillna(-999)
+
     ask_lambda_limit = total_lambda + cancel_ask_volume + current_ask_volume.diff().fillna(-999)
     bid_lambda_limit = total_lambda + cancel_bid_volume + current_bid_volume.diff().fillna(-999)
 
@@ -157,7 +158,6 @@ def makeX(dataSet):
     print("featV7_shape", featV7.shape)
 
     ###V8: relative intensity indicators
-
 
     ask_lambda_limit_T1 = pd.Series(ask_lambda_limit).rolling(window=DELTA_T1_POINTS).mean().fillna(0)
     ask_lambda_limit_T2 = pd.Series(ask_lambda_limit).rolling(window=DELTA_T2_POINTS).mean().fillna(0)
