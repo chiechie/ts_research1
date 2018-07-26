@@ -143,15 +143,16 @@ def makeX(dataSet):
 
     ask_lambda_cancel = cancel_ask_volume.diff().fillna(-999)
     bid_lambda_cancel = cancel_bid_volume.diff().fillna(-999)
+    current_bid_volume_diff = current_bid_volume.diff().fillna(-999)
 
     total_lambda = total_volume.diff().fillna(-999)
-    ask_lambda_limit = total_lambda + cancel_ask_volume + current_ask_volume.diff().fillna(-999)
-    bid_lambda_limit = total_lambda + cancel_bid_volume + current_bid_volume.diff().fillna(-999)
+    ask_lambda_limit = total_lambda + ask_lambda_cancel + current_bid_volume_diff
+    bid_lambda_limit = total_lambda + bid_lambda_cancel + current_bid_volume_diff
 
-    featV7 = np.column_stack([ask_lambda_cancel, bid_lambda_cancel,
+    featV7 = np.column_stack([ask_lambda_cancel, bid_lambda_cancel,current_bid_volume_diff,
                               total_lambda, ask_lambda_limit, bid_lambda_limit])
 
-    featV7_column = ["ask_lambda_cancel", "bid_lambda_cancel",
+    featV7_column = ["ask_lambda_cancel", "bid_lambda_cancel","current_bid_volume_diff",
                               "total_lambda", "ask_lambda_limit", "bid_lambda_limit"]
     assert len(featV7_column) == featV7.shape[1]
     print("featV7_shape", featV7.shape)
@@ -205,6 +206,7 @@ def makeY(dataSet):
     labels = np.zeros(featV1.shape[0])
     labels[:-delta_Events] = labels_tmp
     return labels
+
 
 if __name__ == "__main__":
     file_names = [join(input_dir, i) for i in listdir(input_dir) if ".csv" in i]
