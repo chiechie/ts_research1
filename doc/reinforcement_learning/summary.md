@@ -1,24 +1,21 @@
-paper
-
+## resource
 
 https://github.com/chiechie/awesome-rl
 
 
-blog
+## blog
 
 https://keon.io/deep-q-learning/
 
 
 
-code
+## code
 
 keras项目下的rf
 
 https://github.com/keras-rl/keras-rl
 
 http://keras-rl.readthedocs.io/en/latest/
-
-https://keon.io/deep-q-learning/
 
 https://github.com/deependersingla/deep_trader.git
 
