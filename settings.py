@@ -17,7 +17,7 @@ def get_user_data_dir():
     elif os.getcwd().startswith('/data/mapleleaf'):
         LOCAL_UDF_DATA_DIR = config_json.get_config('REMOTE_DATA_DIR')
     elif os.getcwd().startswith('/Users/brent/'):
-	LOCAL_UDF_DATA_DIR = config_json.get_config('LOCAL_UDF_DATA_DIR')['gaojian']
+        LOCAL_UDF_DATA_DIR = config_json.get_config('LOCAL_UDF_DATA_DIR')['gaojian']
     else:
         print 'get_user_data_dir error '
         LOCAL_UDF_DATA_DIR = ''
@@ -29,16 +29,20 @@ override_config = {
     'ENV_TYPE': 'TEST',
     ##PATH CONFIG
     'LOCAL_UDF_DATA_DIR': {
-        'shihuanzhao': '/Users/brent/Downloads/ts_research1/test_data/',
+        'shihuanzhao':
+            '/Users/stellazhao/tencent_workplace/labgit/dataming/ts_research1/test_data',
 	'gaojian':'/Users/brent/Downloads/ts_research1/test_data'	
         },
     "REMOTE_DATA_DIR": "/data/mapleleaf/shihuan/",
+    ### svm test ###
     "original_data": pre + "/order_book_DB/",
     "STEP1_DATA_SUBDIR": pre + "/labeled_data/",
     "STEP1_PIC_SUBDIR": pre + "/step1_labeled_data_pic/",
 
     "STEP2_DATA_SUBDIR": pre + "/step2_model_data",
     "STEP2_PIC_SUBDIR": pre + "/step2_transform_pic",
+    ### reinforcement test data ###
+    "rf_test_data": pre + "/rf_test_data",
 
     ##ENV CONFIG
     #"ENV": "REMOTE",

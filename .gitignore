@@ -6,6 +6,8 @@ automl/nas/experiment/model/
 src/research1
 *.ipynb
 *.pkl
+*saved_networks/*
+*logs/*
 #platform_engine
 #platform_app
 *.idea/*
