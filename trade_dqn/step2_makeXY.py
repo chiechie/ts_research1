@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Standard library
 from os.path import join
+
 # Third Party Library
 import pandas as pd
 from sklearn.cross_validation import train_test_split
@@ -10,18 +11,17 @@ except:
     import _pickle as pickle
 
 # My Library
-import episodic_data
+from common.path_helper import load_data, loadPklfrom
 
 action_map = {0: "Hold", 1: "Buy", 2: "Sell"}
 data_dict = {}
 # calling data_dict is data_dict[episodic_data.list_md5_string_value(list)]
 
-def get_intial_data(data_path, data_dict_path):
-    data = episodic_data.load_data(data_path, episode=10)
+def get_intial_data(data_path, data_dict_path, supervised_y_data_path):
+    data = load_data(data_path, episode=10)
     # np.array(data).shape == 62773, 10, 20
     global data_dict
-    data_dict = episodic_data.load_file_data(data_dict_path)
-    supervised_y_data = episodic_data.make_supervised_data(data, data_dict)
+    supervised_y_data = loadPklfrom(supervised_y_data_path)
     x_train, x_test, y_train, y_test = train_test_split(data, supervised_y_data, test_size=0.10, random_state=123)
     data_dictionary = {}
     #here one is portfolio value

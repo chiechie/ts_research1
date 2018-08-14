@@ -9,6 +9,12 @@ import shutil
 import pandas as pd
 
 
+def load_data(file, episode):
+    data = loadPklfrom(file)
+    return map(list, zip(*[iter(data)] * episode))
+
+
+
 def mkdir_p(path):
     try:
         makedirs(path)
