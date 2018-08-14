@@ -65,6 +65,7 @@ class RLMomentum(object):
         self.rewards = self.rewards + reward.values * (self.gamma ** self.count)
         self.count = self.count + self.isVisited
 
+
     def updateQ(self, itr):
         self.q = (self.q * itr + self.rewards) / (itr + 1)
 
