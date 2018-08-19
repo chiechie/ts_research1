@@ -10,7 +10,7 @@ default_config = {}
 addition_config = {}
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '.'))
 raw_data_file = os.path.join(parent_dir, 'tensor-reinforcement/NIFTY50.csv')
-supervised_y_data_path = join(parent_dir, "./test_data/rf_test_data/supervised_y_data.pkl")
+supervised_y_data_path = join(parent_dir, "./test_data/rf_test_data/supervised_data.pkl")
 data_path = join(parent_dir, "./test_data/rf_test_data/data.pkl")
 data_dict_path = join(parent_dir, "./test_data/rf_test_data/data_dict.pkl")
 
