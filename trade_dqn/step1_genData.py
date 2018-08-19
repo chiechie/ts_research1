@@ -6,17 +6,12 @@ import numpy as np
 
 from common.path_helper import savePklto, join, list_md5_string_value
 from trade_dqn.supervised_helper import generate_actions_from_price_data
+from settings import data_dict_path, data_path, supervised_y_data_path, raw_data_file
 
 
 episode = 10  # length of one episode
 data_array = []
-parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-raw_data_file = os.path.join(parent_dir, 'tensor-reinforcement/NIFTY50.csv')
-supervised_y_data_path = join(parent_dir, "../test_data/rf_test_data/supervised_y_data.pkl")
 moving_average_number = 1000  # number of time interval for calculating moving average
-data_path = join(parent_dir, "../test_data/rf_test_data/data.pkl")
-data_dict_path = join(parent_dir, "../test_data/rf_test_data/data_dict.pkl")
-
 
 def prepare_data(path, data_path, data_dict_path):
     stock_data = genfromtxt(path, delimiter=',', dtype=None, names=True)
@@ -81,20 +76,11 @@ def prepare_data(path, data_path, data_dict_path):
 def make_supervised_data(data, data_dict, supervised_y_data_path):
     supervised_data = []
     for episode in data:
-        supervised_data.append(episode_supervised_data(episode, data_dict))
+        prices = [data_dict.get(list_md5_string_value(episode_i), [0])[-1] for episode_i in episode]
+        long_position, final_profit = generate_actions_from_price_data(prices)
+        supervised_data.append(long_position)
     savePklto(supervised_data, supervised_y_data_path)
     return None
-
-
-def episode_supervised_data(data, data_dict):
-    prices = []
-    for iteration in data:
-        key = list_md5_string_value(iteration)
-        value = data_dict.get(key, [0])
-        prices.append(value[-1])
-    long_position, final_profit = generate_actions_from_price_data(prices)
-    return long_position
-
 
 # def data_average_price(data_dict, data):
 #     #data = data_dict[list_md5_string_value(data)]
