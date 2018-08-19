@@ -11,7 +11,7 @@ except:
 # My Library
 from settings import Config_json, get_user_data_dir
 from common.path_helper import load_data, loadPklfrom
-from trade_dqn.dqn_model import DQN, new_stage_data, show_trader_path
+from trade_dqn.dqn_model import DQN, env_stage_data, show_trader_path
 # ---------------------------------------------------------
 # Hyper Parameters
 EPISODE = 100  # Episode limitation
@@ -22,6 +22,7 @@ config_json = Config_json()
 root_dir = get_user_data_dir()
 input_dir = join(root_dir, config_json.get_config("rf_test_data"))
 
+from settings import data_path, data_dict_path, supervised_y_data_path
 data_dict = {}
 
 
@@ -29,9 +30,10 @@ def get_intial_data(data_path, data_dict_path, supervised_y_data_path):
     data = load_data(data_path, episode=10)
     # np.array(data).shape == 62773, 10, 20
     global data_dict
+    data_dict = loadPklfrom(data_dict_path)
     supervised_y_data = loadPklfrom(supervised_y_data_path)
     x_train, x_test, y_train, y_test = train_test_split(data, supervised_y_data, test_size=0.10, random_state=123)
-    data_dictionary = {}
+    data_dictionary={}
     #here one is portfolio value
     data_dictionary["input"] = len(x_train[0][0]) + 1
 
@@ -48,12 +50,10 @@ def get_intial_data(data_path, data_dict_path, supervised_y_data_path):
     return data_dictionary
 
 
-
 def main():
     # initialize OpenAI Gym env and dqn agent
     # env = gym.make(ENV_NAME)
-    data_dictionary = get_intial_data(join(input_dir, "data.pkl"),
-                                      join(input_dir, "data_dict.pkl"))
+    data_dictionary = get_intial_data(data_path, data_dict_path, supervised_y_data_path)
     #初始化agent
     agent = DQN(data_dictionary)
 
@@ -75,7 +75,6 @@ def main():
                 # agent在新数据（reward， next_state）到达之后,在perceive中实现:
                 # 1. 维护q_table：将新的数据存入，旧的输出丢掉
                 # 2. 重新训练Q_network
-                
                 agent.perceive(state, action, reward, next_state, done)
     
                 if done:
@@ -129,28 +128,6 @@ def main():
     for key, value in test_rewards.iteritems():
         print(key)
         print(value[1])
-
-
-def env_stage_data(agent, step, episode_data, portfolio, portfolio_value, train):
-    # state :[初始股价， 持有量]
-    state = episode_data[step] + [portfolio]
-    if train:
-        action = agent.egreedy_action(state)  # e-greedy action for train
-    else:
-        action = agent.action(state)
-    # print(step)
-    if step < STEP - 2:
-        new_state = episode_data[step + 1]
-    else:
-        new_state = episode_data[step + 1]
-    if step == STEP - 1:
-        done = True
-    else:
-        done = False
-    next_state, reward, done, portfolio, portfolio_value = new_stage_data(action, portfolio, state, new_state,
-                                                                          portfolio_value, done, episode_data[step])
-    return state, action, next_state, reward, done, portfolio, portfolio_value
-
 
 if __name__ == '__main__':
     main()

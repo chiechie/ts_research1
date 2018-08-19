@@ -39,18 +39,17 @@ def prepare_data(path, data_path, data_dict_path):
         if index > moving_average_number:
             # average_dataset始终保持长度 == moving_average_number
             # mean是average_dataset的5个特征的均值
-            np.mean(data, axis=0)
             mean = np.mean(average_dataset, axis=0)
             # mean_array是将average_dataset按照mean给scale之后的结果
             mean_array = average_dataset / mean
             # last_minute_data是原始数据归一化之后最近1分钟的均值
             last_minute_data = mean_array[-1]
             # last_one_hour_average是原始数据归一化之后最近一个小时的均值
-            last_one_hour_average = find_average(mean_array[-60:])
+            last_one_hour_average = np.mean(mean_array[-60:], axis=0)
             # last_one_hour_average是原始数据归一化之后最近一天的均值
-            last_one_day_average = find_average(mean_array[-300:])
+            last_one_day_average = np.mean(mean_array[-300:], axis=0)
             # last_one_hour_average是原始数据归一化之后最近三天的均值
-            last_3_day_average = find_average(mean_array[-900:])  # this might change
+            last_3_day_average = np.mean(mean_array[-900:], axis=0)  # this might change
 
             # average_dataset 扔掉旧数据
             average_dataset = average_dataset[1:]

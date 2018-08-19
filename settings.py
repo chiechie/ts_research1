@@ -4,9 +4,15 @@
 # My Library
 from collections import OrderedDict
 import os
+from os.path import join
 
 default_config = {}
 addition_config = {}
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '.'))
+raw_data_file = os.path.join(parent_dir, 'tensor-reinforcement/NIFTY50.csv')
+supervised_y_data_path = join(parent_dir, "./test_data/rf_test_data/supervised_y_data.pkl")
+data_path = join(parent_dir, "./test_data/rf_test_data/data.pkl")
+data_dict_path = join(parent_dir, "./test_data/rf_test_data/data_dict.pkl")
 
 pre = '.'
 def get_user_data_dir():
@@ -18,9 +24,9 @@ def get_user_data_dir():
     elif os.getcwd().startswith('/Users/brent/'):
         LOCAL_UDF_DATA_DIR = config_json.get_config('LOCAL_UDF_DATA_DIR')['gaojian']
     else:
-        print 'get_user_data_dir error '
+        print('get_user_data_dir error ')
         LOCAL_UDF_DATA_DIR = ''
-    print 'your local data dir prefix is: %s' % (LOCAL_UDF_DATA_DIR)
+    print('your local data dir prefix is: %s' % (LOCAL_UDF_DATA_DIR))
     return LOCAL_UDF_DATA_DIR
 
 
@@ -67,7 +73,7 @@ override_config = {
 def get_addition_cfg(biz_id, case_type):
     try:
         res = addition_config[biz_id][case_type]
-    except Exception, e:
+    except:
         # print '[CONFIG] got empty addition cfg'
         res = {}
     return res

@@ -13,6 +13,7 @@ FINAL_EPSILON = 0.1 # final value of epsilon
 REPLAY_SIZE = 20000 # experience replay buffer size
 BATCH_SIZE = 64 # size of minibatch
 action_map = {0: "Hold", 1: "Buy", 2: "Sell"}
+STEP = 9
 
 class DQN(object):
 	# DQN Agent
@@ -51,7 +52,7 @@ class DQN(object):
 		variable_summaries(W1, "layer1/weights")
 		b1 = self.bias_variable([data_dictionary["hidden_layer_1_size"]])
 		variable_summaries(b1, "layer1/bias")
-		W2 = self.weight_variable([data_dictionary["hidden_layer_1_size"],self.action_dim])
+		W2 = self.weight_variable([data_dictionary["hidden_layer_1_size"], self.action_dim])
 		variable_summaries(W2, "layer2/weights")
 		b2 = self.bias_variable([self.action_dim])
 		variable_summaries(b2, "layer2/bias")
@@ -87,7 +88,6 @@ class DQN(object):
 		if len(self.replay_buffer) > 2000:
 			self.train_Q_network()
 
-
 	def train_Q_network(self):
 		# Step 1: obtain random mini-batch from replay memory
 		minibatch = random.sample(self.replay_buffer, BATCH_SIZE)
@@ -95,19 +95,21 @@ class DQN(object):
 		action_batch = [data[1] for data in minibatch]
 		reward_batch = [data[2] for data in minibatch]
 		next_state_batch = [data[3] for data in minibatch]
+		done_batch = [data[4] for data in minibatch]
 
 		# Step 2: calculate y
 		y_batch = []
 		Q_value_batch = self.Q_value.eval(feed_dict={self.state_input: next_state_batch})
 		for i in range(0, BATCH_SIZE):
-			done = minibatch[i][4]
-			if done:
+			if done_batch[i]:
 				y_batch.append(reward_batch[i])
 			else:
 				y_batch.append(reward_batch[i] + GAMMA * np.max(Q_value_batch[i]))
 
 		self.optimizer.run(feed_dict={
+			#收益率
 			self.y_input: y_batch,
+			#买还是卖
 			self.action_input: action_batch,
 			self.state_input: state_batch
 			})
@@ -123,6 +125,9 @@ class DQN(object):
 			self.saver.save(self.session, 'saved_networks/' + 'network' + '-dqn', global_step = self.time_step)
 
 	def egreedy_action(self, state):
+		# 输入state([20个价格，持有量])
+		# exploite: 以一定比例输出最大reward对应的策略(买/卖/不动)
+		# explore: 以一定比例输出随机策略
 		Q_value = self.Q_value.eval(feed_dict={
 			self.state_input: [state]
 			})[0]
@@ -135,6 +140,8 @@ class DQN(object):
 			return np.argmax(Q_value)
 
 	def action(self, state):
+		# 输入state([20个价格，持有量])
+		# 输出最大reward对应的策略(买/卖/不动)
 		return np.argmax(self.Q_value.eval(feed_dict={
 			self.state_input: [state]
 			})[0])
@@ -144,12 +151,35 @@ class DQN(object):
 		return tf.Variable(initial)
 
 	def bias_variable(self, shape):
-		initial = tf.constant(0.01, shape = shape)
+		initial = tf.constant(0.01, shape=shape)
 		return tf.Variable(initial)
 
 
-def new_stage_data(action, portfolio, old_state, new_state, portfolio_value, done, episode_data):
+def env_stage_data(agent, step, episode_data, portfolio, portfolio_value, train):
+	# state: [初始股价(20个价格)， 持有量]
+	state = episode_data[step] + [portfolio]
+	if train:
+		"""在训练阶段采用egreedy_action"""
+		action = agent.egreedy_action(state)  # e-greedy action for train
+	else:
+		"""在应用阶段输出最大reward的action"""
+		action = agent.action(state)
+	# print(step)
+	if step < STEP - 2:
+		new_episode_data = episode_data[step + 1]
+	else:
+		new_episode_data = episode_data[-1]
+
+	done = False if step == STEP - 1 else True
+	next_state, reward, done, portfolio, portfolio_value = new_stage_data(action, portfolio,
+																		  portfolio_value, done, episode_data[step],
+																		  new_episode_data)
+	return state, action, next_state, reward, done, portfolio, portfolio_value
+
+
+def new_stage_data(action, portfolio, portfolio_value, done, episode_data, new_episode_data):
 	"""
+	根据当前state, action, new_state计算reward
     :param action:
     :param portfolio:头寸
     :param old_state:
@@ -164,31 +194,30 @@ def new_stage_data(action, portfolio, old_state, new_state, portfolio_value, don
 	key = list_md5_string_value(episode_data)
 	price = data_dict.get(key, [0])[-1]
 
-	key = list_md5_string_value(new_state)
+	key = list_md5_string_value(new_episode_data)
 	next_price = data_dict.get(key, [0])[-1]
 
 	#buying
 	if action == 1:
-		#old_price = old_state[1]
 		#Todo: Add transaction cost here also
 		portfolio_value -= price
 		portfolio += 1
 	#selling
 	elif action == 2:
-		#old_price = old_state[2]
-		 #Todo: Add transaction cost here also
+		#Todo: Add transaction cost here also
+		# old_price = old_state[1]
 		portfolio_value += price
 		portfolio -= 1
 	elif action == 0:
-		portfolio = portfolio
+		pass
 
 	#if new_state:
-	new_state = new_state + [portfolio]
+	new_state = new_episode_data + [portfolio]
 	#reward system might need to change and require some good thinking
-	#if done:
 	reward = (portfolio_value + portfolio * next_price)
 	if reward > 0:
-		reward = 2*reward #increasing reward
+		reward = 2*reward
+		#increasing reward
 	return (new_state, reward, done, portfolio, portfolio_value)
 
 

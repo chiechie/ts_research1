@@ -1,10 +1,6 @@
 # coding=utf-8
 # 根据股价序列，计算出最优的执行策略
-# 这里调用pulp求解整数优化问题
-
 import numpy as np
-from ortools.linear_solver import pywraplp
-from pulp import LpProblem, LpVariable, lpSum, LpMinimize, LpBinary
 
 action_list = [1, 2]
 
@@ -19,6 +15,7 @@ def find_profit_from_given_action(price_list):
 def test():
     price_list = [1, 2, 600, 4, 5, 6,7,8,9,5]
     print(find_profit_from_given_action(price_list))
+
 
 if __name__ == "__main__":
     test()
