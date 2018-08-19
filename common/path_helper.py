@@ -1,11 +1,14 @@
 # encoding=utf-8
 from os.path import dirname, join, exists, isdir, split, isfile
-from os import makedirs, errno, listdir, remove, walk
+from os import makedirs, errno, listdir, remove, walk, mkdir
 import json
-import os
-
-import cPickle as pkl
+try:
+    import cPickle as pkl
+except ImportError:
+    import _pickle as pkl
 import shutil
+import hashlib
+
 import pandas as pd
 
 
@@ -18,7 +21,7 @@ def load_data(file, episode):
 def mkdir_p(path):
     try:
         makedirs(path)
-        print "[mkdir_p]", path
+        print("[mkdir_p]", path)
     except OSError as exc:
         # Python >2.5 (except OSError, exc: for Python <2.5)
         if exc.errno == errno.EEXIST and isdir(path):
@@ -32,7 +35,7 @@ def saveCSV(d, des_dir):
     if not file_path.startswith("/"):
         file_path = "/" + "/".join(file_path.split("/")[1:])
     mkdir_p(dirname(file_path))
-    print "[saveCSV]%s" % des_dir
+    print("[saveCSV]%s" % des_dir)
     with open(des_dir, "w") as f:
         f.write(d)
     pass
@@ -42,7 +45,7 @@ def readCSV(des_dir):
     file_path = get_normal_path(des_dir)
     if not file_path.startswith("/"):
         file_path = "/" + "/".join(file_path.split("/")[1:])
-    print "[readCSV]%s" % des_dir
+    print("[readCSV]%s" % des_dir)
     with open(file_path, "r") as f:
         d = f.read()
     return d
@@ -51,14 +54,14 @@ def readCSV(des_dir):
 def clean_dir(des_dir):
     if isfile(des_dir):
         remove(des_dir)
-        print "[CleanPath][%s]" % des_dir
+        print("[CleanPath][%s]" % des_dir)
         return
-    des_dir_files = os.listdir(des_dir)
+    des_dir_files = listdir(des_dir)
     if len(des_dir_files) > 0:
         try:
             shutil.rmtree(des_dir)
-            os.mkdir(des_dir)
-            print "[CleanPath][%s]" % des_dir
+            mkdir(des_dir)
+            print("[CleanPath][%s]" % des_dir)
             return
         except:
             return
@@ -80,13 +83,13 @@ def clean_path(class_csv_path, file_list):
                 break
         if not save:
             remove(join(class_csv_path, file))
-            print "[remove]", join(class_csv_path, file)
+            print("[remove]", join(class_csv_path, file))
     return
 
 
 def moveFileto(sourceDir,  targetDir):
     if not exists(sourceDir):
-        print "not exist", sourceDir
+        print("not exist", sourceDir)
         return sourceDir
     if exists(targetDir):
         return
@@ -102,7 +105,7 @@ def savePNG(plt, targetDir, **kwargs):
     if not file_path.startswith("/"):
         file_path = "/" + "/".join(file_path.split("/")[1:])
     mkdir_p(dirname(file_path))
-    print "[savePNG]%s" % file_path
+    print("[savePNG]%s" % file_path)
     plt.savefig(file_path, **kwargs)
     return
 
@@ -110,23 +113,22 @@ def savePNG(plt, targetDir, **kwargs):
 def savePklto(py_obj, targetDir):
     targetDir = get_normal_path(targetDir)
     mkdir_p(dirname(targetDir))
-    print "[savePklto]%s" % targetDir
+    print("[savePklto]%s" % targetDir)
     with open(targetDir, "wb") as f:
         pkl.dump(py_obj, f)
     return
 
 
-
 def pywalker(path):
     file_absolute = []
-    for root, dirs, files in os.walk(path):
+    for root, dirs, files in walk(path):
         for file_ in files:
             file_absolute.append(join(root, file_) )
     return file_absolute
 
 
 def loadPklfrom(sourceDir):
-    print "[loadPklfrom]%s" % sourceDir
+    print("[loadPklfrom]%s" % sourceDir)
     with open(sourceDir, "rb") as f:
         py_obj = pkl.load(f)
     return py_obj
@@ -147,7 +149,7 @@ def saveJSON(df, file_path):
     if not file_path.startswith("/"):
         file_path = "/" + "/".join(file_path.split("/")[1:])
     mkdir_p(dirname(file_path))
-    print "[SavingJSON]%s" % file_path
+    print("[SavingJSON]%s" % file_path)
     with open(file_path, "wb") as f:
         f.write(json.dumps(df))
     return
@@ -155,7 +157,7 @@ def saveJSON(df, file_path):
 
 def readJSON(file_path):
     file_path = get_normal_path(file_path)
-    print "[readJSON]%s" % file_path
+    print("[readJSON]%s" % file_path)
     with open(file_path, "rb") as f:
         df = f.read()
     return json.loads(df)
@@ -193,7 +195,7 @@ def saveDF(df, file_path):
     if not file_path.startswith("/"):
         file_path = "/" + "/".join(file_path.split("/")[1:])
     mkdir_p(dirname(file_path))
-    print "[SavingDF]%s" % file_path
+    print("[SavingDF]%s" % file_path)
     if not isinstance(df, pd.DataFrame):
         df = pd.DataFrame(df, )
     df.to_csv(file_path, index=None)
@@ -202,7 +204,7 @@ def saveDF(df, file_path):
 
 def readDF(file_path, **kwargs):
     file_path = get_normal_path(file_path)
-    print "[readDF]%s" % file_path
+    print("[readDF]%s" % file_path)
     df = pd.read_csv(file_path, **kwargs)
     return df
 
@@ -211,25 +213,26 @@ def split_dir(file_path):
     _dir, _filename = split(file_path)
     return _dir, _filename
 
-
-def setCache(k, v):
-    # N_mb = sys.getsizeof(v) / (1024 * 1024)
-    # if N_mb >= 1:
-    print "[setCache]%s" % k
-    print type(v)
-    set_cache(key=hash32(k), value=v, expires=86400 * 180,  use_external=False, use_disk=True)
-    return
+def list_md5_string_value(list):
+    string = json.dumps(list)
+    return hashlib.md5(string).hexdigest()
 
 
-def getCache(k):
-    print "[getCache]%s" % k
-    v = get_cache(key=hash32(k), use_external=False, use_disk=True)
-    print type(v)
-    return v
+# def setCache(k, v):
+#     # N_mb = sys.getsizeof(v) / (1024 * 1024)
+#     # if N_mb >= 1:
+#     print("[setCache]%s" % k)
+#     print(type(v))
+#     set_cache(key=hash32(k), value=v, expires=86400 * 180,  use_external=False, use_disk=True)
+#     return
+#
+#
+# def getCache(k):
+#     print "[getCache]%s" % k
+#     v = get_cache(key=hash32(k), use_external=False, use_disk=True)
+#     print(type(v))
+#     return v
 
 
 if __name__ == "__main__":
-    setCache(k=u"lal0", v=[1, 2, 3])
-    # set_cache(key=hash32(u'lal'), value=[1,2,3], expires=86400 * 180,  use_external=False, use_disk=True)
-    print getCache(u"lal0")
-    #print get_cache(key=hash32(u"lal0"), use_external=False, use_disk=True)
+    pass

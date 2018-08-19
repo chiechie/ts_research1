@@ -32,6 +32,7 @@ class RLMomentum(object):
 
         self.momentum = np.zeros(self.samples)
    
+   
     def init(self):
         self.count = np.zeros((self.states, self.states, self.actions), dtype = np.int16)
         self.isVisited = np.zeros((self.states, self.states, self.actions), dtype = np.bool)

@@ -2,7 +2,6 @@
 # Standard library
 # Third Party Library
 # My Library
-# -*- coding: utf-8 -*-
 from collections import OrderedDict
 import os
 

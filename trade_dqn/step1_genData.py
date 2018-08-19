@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
-import gzip
 import os
 
 from numpy import genfromtxt
-from sklearn.cross_validation import train_test_split
 import numpy as np
-import cPickle as pickle
-import hashlib
-import json
-from supervised_helper import generate_actions_from_price_data
-from common.path_helper import savePklto
+
+from common.path_helper import savePklto, join, list_md5_string_value
+from trade_dqn.supervised_helper import generate_actions_from_price_data
+
 
 episode = 10  # length of one episode
 data_array = []
@@ -29,20 +26,21 @@ def prepare_data(path, data_path, data_dict_path):
     data_dict = {}
     index = 0
     lines = []
-    print "total ", stock_data
+    print("total ", stock_data)
     for data in stock_data:
         # temp = [open, high, low, close, count]
         # dict_vector = temp + [average], but average is incorrect.
         temp = [data[2], data[3], data[4], data[5], data[8]]
         average_dataset.append(temp)
         if index % 1000 == 13:
-            print index, len(average_dataset)
+            print(index, len(average_dataset))
         # print(index)
         # print(len(average_dataset))
         if index > moving_average_number:
             # average_dataset始终保持长度 == moving_average_number
             # mean是average_dataset的5个特征的均值
-            mean = find_average(average_dataset)
+            np.mean(data, axis=0)
+            mean = np.mean(average_dataset, axis=0)
             # mean_array是将average_dataset按照mean给scale之后的结果
             mean_array = average_dataset / mean
             # last_minute_data是原始数据归一化之后最近1分钟的均值
@@ -81,39 +79,29 @@ def prepare_data(path, data_path, data_dict_path):
     return None
 
 
-def find_average(data):
-    return np.mean(data, axis=0)
-
-
-
-def list_md5_string_value(list):
-    string = json.dumps(list)
-    return hashlib.md5(string).hexdigest()
-
-
-def episode_supervised_data(data, data_dict):
-    prices = []
-    for iteration in data:
-        prices.append(data_average_price(data_dict, iteration))
-    actions = generate_actions_from_price_data(prices)
-    return actions
-
-
-def data_average_price(data_dict, data):
-    #data = data_dict[list_md5_string_value(data)]
-    key = list_md5_string_value(data)
-    value = data_dict.get(key)
-    if value is None:
-        return 0
-    return value[-1]
-
-
 def make_supervised_data(data, data_dict, supervised_y_data_path):
     supervised_data = []
     for episode in data:
         supervised_data.append(episode_supervised_data(episode, data_dict))
     savePklto(supervised_data, supervised_y_data_path)
     return None
+
+
+def episode_supervised_data(data, data_dict):
+    prices = []
+    for iteration in data:
+        key = list_md5_string_value(iteration)
+        value = data_dict.get(key, [0])
+        prices.append(value[-1])
+    actions = generate_actions_from_price_data(prices)
+    return actions
+
+
+# def data_average_price(data_dict, data):
+#     #data = data_dict[list_md5_string_value(data)]
+#     key = list_md5_string_value(data)
+#     value = data_dict.get(key, [0])
+#     return value[-1]
 
 
 if __name__ == "__main__":
