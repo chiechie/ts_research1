@@ -93,8 +93,8 @@ def episode_supervised_data(data, data_dict):
         key = list_md5_string_value(iteration)
         value = data_dict.get(key, [0])
         prices.append(value[-1])
-    actions = generate_actions_from_price_data(prices)
-    return actions
+    long_position, final_profit = generate_actions_from_price_data(prices)
+    return long_position
 
 
 # def data_average_price(data_dict, data):
