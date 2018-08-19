@@ -195,8 +195,8 @@ def new_stage_data(action, portfolio, old_state, new_state, portfolio_value, don
 def show_trader_path(actions, episode_data, portfolio_list, portfolio_value_list, reward_list):
 	i = 0
 	global data_dict
-	#print("Action, Average Price, Portfolio, Portfolio Value, Reward")
-    for index, action in enumerate(actions):
+	# print("Action, Average Price, Portfolio, Portfolio Value, Reward")
+	for index, action in enumerate(actions):
 		episode = episode_data[index]
 		action_name = action_map[actions[index]]
 
@@ -208,8 +208,7 @@ def show_trader_path(actions, episode_data, portfolio_list, portfolio_value_list
 		i += 1
 		reward = reward_list[index]
 		#print(action_name, price, portfolio, portfolio_value, reward)
-
-    episode = episode_data[i]
+	episode = episode_data[i]
 	key = list_md5_string_value(episode)
 	last_price = data_dict.get(key, [0])[-1]
 	#print(last_price)
