@@ -4,13 +4,13 @@
 # My Library
 from collections import OrderedDict
 import os
-from os.path import join
+from os.path import join, abspath
 
 default_config = {}
 addition_config = {}
-parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '.'))
+parent_dir = abspath(os.path.join(os.path.dirname(__file__), '.'))
 # raw_data_file = os.path.join(parent_dir, 'tensor-reinforcement/NIFTY50.csv')
-raw_data_file = os.path.join(parent_dir, './test_data/ib/csv_data/AJP.csv')
+raw_data_file = join(parent_dir, './test_data/ib/csv_data/AJP.csv')
 supervised_y_data_path = join(parent_dir, "./test_data/rf_test_data/supervised_data.pkl")
 data_path = join(parent_dir, "./test_data/rf_test_data/data.pkl")
 data_dict_path = join(parent_dir, "./test_data/rf_test_data/data_dict.pkl")
@@ -21,11 +21,11 @@ pre = '.'
 def get_user_data_dir():
     config_json = Config_json()
     if os.getcwd().startswith('/Users/stellazhao'):
-        LOCAL_UDF_DATA_DIR = config_json.get_config('LOCAL_UDF_DATA_DIR')['shihuanzhao']
+        LOCAL_UDF_DATA_DIR = config_json.get_config('LOCAL_UDF_DATA_DIR')['stellazhao']
     elif os.getcwd().startswith('/data/mapleleaf'):
         LOCAL_UDF_DATA_DIR = config_json.get_config('REMOTE_DATA_DIR')
     elif os.getcwd().startswith('/Users/brent/'):
-        LOCAL_UDF_DATA_DIR = config_json.get_config('LOCAL_UDF_DATA_DIR')['gaojian']
+        LOCAL_UDF_DATA_DIR = config_json.get_config('LOCAL_UDF_DATA_DIR')['brent']
     else:
         print('get_user_data_dir error ')
         LOCAL_UDF_DATA_DIR = ''
@@ -37,9 +37,9 @@ override_config = {
     'ENV_TYPE': 'TEST',
     ##PATH CONFIG
     'LOCAL_UDF_DATA_DIR': {
-        'shihuanzhao':
+        'stellazhao':
             '/Users/stellazhao/tencent_workplace/labgit/dataming/ts_research1/test_data',
-	'gaojian':'/Users/brent/Downloads/ts_research1/test_data'	
+	   'brent':'/Users/brent/Downloads/ts_research1/test_data',
         },
     "REMOTE_DATA_DIR": "/data/mapleleaf/shihuan/",
     ### svm test ###

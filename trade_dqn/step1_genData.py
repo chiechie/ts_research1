@@ -83,9 +83,15 @@ def make_supervised_data(data_path, data_dict_path, supervised_y_data_path):
     return None
 
 
+def check_dimension(data_path, supervised_y_data_path):
+    data = loadPklfrom(data_path)
+    supervised_y_data = loadPklfrom(supervised_y_data_path)
+    print("len(data)", len(data))
+    print("len(supervised_y_data)", len(supervised_y_data))
+
 
 if __name__ == "__main__":
     # prepare_data(raw_data_file, data_path, data_dict_path)
-    make_supervised_data(data_path, data_dict_path, supervised_y_data_path)
-
+    # make_supervised_data(data_path, data_dict_path, supervised_y_data_path)
+    check_dimension(data_path, supervised_y_data_path)
 
