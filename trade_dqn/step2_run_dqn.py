@@ -26,12 +26,13 @@ from settings import data_path, data_dict_path, supervised_y_data_path
 data_dict = {}
 
 
-def get_intial_data(data_path, data_dict_path, supervised_y_data_path):
+def get_intial_data(data_path, supervised_y_data_path):
     data = load_data(data_path, episode=10)
     # np.array(data).shape == 62773, 10, 20
-    global data_dict
-    data_dict = loadPklfrom(data_dict_path)
+    # global data_dict
+    # data_dict = loadPklfrom(data_dict_path)
     supervised_y_data = loadPklfrom(supervised_y_data_path)
+    print(len(data), len(supervised_y_data))
     x_train, x_test, y_train, y_test = train_test_split(data, supervised_y_data, test_size=0.10, random_state=123)
     data_dictionary={}
     #here one is portfolio value
@@ -53,7 +54,7 @@ def get_intial_data(data_path, data_dict_path, supervised_y_data_path):
 def main():
     # initialize OpenAI Gym env and dqn agent
     # env = gym.make(ENV_NAME)
-    data_dictionary = get_intial_data(data_path, data_dict_path, supervised_y_data_path)
+    data_dictionary = get_intial_data(data_path, supervised_y_data_path)
     #初始化agent
     agent = DQN(data_dictionary)
 
