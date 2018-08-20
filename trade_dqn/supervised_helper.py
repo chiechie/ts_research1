@@ -2,7 +2,6 @@
 # 根据股价序列，计算出最优的执行策略
 import numpy as np
 
-action_list = [1, 2]
 action_map = {1: 1,
 			 -1: 2}
 

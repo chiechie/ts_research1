@@ -13,6 +13,7 @@ episode = 10  # length of one episode
 data_array = []
 moving_average_number = 1000  # number of time interval for calculating moving average
 
+
 def prepare_data(path, data_path, data_dict_path):
     stock_data = genfromtxt(path, delimiter=',', dtype=None, names=True)
     average_dataset = []
@@ -90,5 +91,5 @@ def make_supervised_data(data, data_dict, supervised_y_data_path):
 
 
 if __name__ == "__main__":
-    prepare_data('./test_data/ib/csv_data/AJP.csv')
+    prepare_data(raw_data_file, data_path, data_dict_path)
 
