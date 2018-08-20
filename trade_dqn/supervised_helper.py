@@ -13,7 +13,7 @@ def generate_actions_from_price_data(price_list):
 	action_list = [action_map[l] for l in long_position]
 	golden_actions = zip(action_list, position)
 	golden_actions = [list(action) for action in golden_actions]
-	return golden_actions, final_profit
+	return (golden_actions, final_profit)
 
 
 def test():

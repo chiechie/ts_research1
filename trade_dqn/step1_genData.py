@@ -4,14 +4,10 @@ import os
 from numpy import genfromtxt
 import numpy as np
 
-from common.path_helper import savePklto, join, list_md5_string_value
+from common.path_helper import savePklto, join, list_md5_string_value, loadPklfrom
 from trade_dqn.supervised_helper import generate_actions_from_price_data
-from settings import data_dict_path, data_path, supervised_y_data_path, raw_data_file
+from settings import data_dict_path, data_path, supervised_y_data_path, raw_data_file, moving_average_number
 
-
-episode = 10  # length of one episode
-data_array = []
-moving_average_number = 1000  # number of time interval for calculating moving average
 
 
 def prepare_data(path, data_path, data_dict_path):
@@ -26,6 +22,7 @@ def prepare_data(path, data_path, data_dict_path):
     for data in stock_data:
         # temp = [open, high, low, close, count]
         # dict_vector = temp + [average], but average is incorrect.
+        # len(average_dataset) == 1002
         temp = [data[2], data[3], data[4], data[5], data[8]]
         average_dataset.append(temp)
         if index % 1000 == 13:
@@ -70,26 +67,25 @@ def prepare_data(path, data_path, data_dict_path):
         index += 1
     savePklto(total_data, data_path)
     savePklto(data_dict, data_dict_path)
-    make_supervised_data(data, data_dict, supervised_y_data_path)
     return None
 
 
-def make_supervised_data(data, data_dict, supervised_y_data_path):
+def make_supervised_data(data_path, data_dict_path, supervised_y_data_path):
+    data = loadPklfrom(data_path)
+    data_dict = loadPklfrom(data_dict_path)
     supervised_data = []
     for episode in data:
         prices = [data_dict.get(list_md5_string_value(episode_i), [0])[-1] for episode_i in episode]
-        long_position, final_profit = generate_actions_from_price_data(prices)
-        supervised_data.append(long_position)
+        assert len(prices) == 10
+        golden_actions, final_profit = generate_actions_from_price_data(prices)
+        supervised_data.append(golden_actions)
     savePklto(supervised_data, supervised_y_data_path)
     return None
 
-# def data_average_price(data_dict, data):
-#     #data = data_dict[list_md5_string_value(data)]
-#     key = list_md5_string_value(data)
-#     value = data_dict.get(key, [0])
-#     return value[-1]
 
 
 if __name__ == "__main__":
-    prepare_data(raw_data_file, data_path, data_dict_path)
+    # prepare_data(raw_data_file, data_path, data_dict_path)
+    make_supervised_data(data_path, data_dict_path, supervised_y_data_path)
+
 
