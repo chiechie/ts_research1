@@ -22,8 +22,18 @@ cd ./ts_research1/
 |   --step2_model_data
 ```
 3. 
+使用svm预测涨跌
 ```bash
 export PYTHONPATH=$pwd
 python scripts/step2_makeXY.py
 python scripts/step3_model.py
 ```
+使用DQN来决策
+```bash
+export PYTHONPATH=$pwd
+python trade_dqn/step1_genData.py
+python trade_dqn/step2_run_dqn.py
+```
+
+
+
