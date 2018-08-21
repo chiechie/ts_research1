@@ -10,7 +10,7 @@ except:
     import _pickle as pickle
 # My Library
 from common.path_helper import load_data, loadPklfrom, list_md5_string_value,savePklto
-from settings import Config_json, get_user_data_dir, data_path, data_dict_path, supervised_y_data_path
+from settings import Config_json, get_user_data_dir, data_path, data_dict_path, supervised_y_data_path, test_rewards_path
 
 from trade_dqn.dqn_model import DQN
 
