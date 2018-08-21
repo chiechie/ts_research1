@@ -32,7 +32,7 @@ python scripts/step3_model.py
 ```bash
 export PYTHONPATH=$pwd
 python trade_dqn/step1_genData.py
-python trade_dqn/step2_run_dqn.py
+python trade_dqn/step2_runDqn.py
 ```
 
 
