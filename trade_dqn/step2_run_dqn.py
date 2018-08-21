@@ -23,6 +23,7 @@ ITERATION = 3
 config_json = Config_json()
 root_dir = get_user_data_dir()
 input_dir = join(root_dir, config_json.get_config("rf_test_data"))
+action_map = {0: "Hold", 1: "Buy", 2: "Sell"}
 
 data_dict = {}
 
@@ -96,7 +97,7 @@ def main():
                         if done:
                             break
                 ave_reward = total_reward / 10
-                print('episode: ', episode, 'Evaluation Average Reward:',ave_reward)
+                print('episode: ', episode_idx, 'Evaluation Average Reward:',ave_reward)
 
         # on test data
         data = data_dictionary["x_test"]
