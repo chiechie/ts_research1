@@ -91,7 +91,7 @@ def check_dimension(data_path, supervised_y_data_path):
 
 
 if __name__ == "__main__":
-    # prepare_data(raw_data_file, data_path, data_dict_path)
-    # make_supervised_data(data_path, data_dict_path, supervised_y_data_path)
+    prepare_data(raw_data_file, data_path, data_dict_path)
+    make_supervised_data(data_path, data_dict_path, supervised_y_data_path)
     check_dimension(data_path, supervised_y_data_path)
 

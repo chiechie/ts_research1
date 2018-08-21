@@ -10,11 +10,12 @@ default_config = {}
 addition_config = {}
 parent_dir = abspath(os.path.join(os.path.dirname(__file__), '.'))
 # raw_data_file = os.path.join(parent_dir, 'tensor-reinforcement/NIFTY50.csv')
-raw_data_file = join(parent_dir, './test_data/ib/csv_data/AJP.csv')
-supervised_y_data_path = join(parent_dir, "./test_data/rf_test_data/supervised_data.pkl")
-data_path = join(parent_dir, "./test_data/rf_test_data/data.pkl")
-data_dict_path = join(parent_dir, "./test_data/rf_test_data/data_dict.pkl")
-test_rewards_path = join(parent_dir, "./test_data/rf_test_data/test_rewards.pkl")
+stock_id = "AJP"
+raw_data_file = join(parent_dir, './test_data/ib/csv_data/%s.csv'%stock_id)
+supervised_y_data_path = join(parent_dir, "./test_data/rf_test_data/supervised_data_%s.pkl"%stock_id)
+data_path = join(parent_dir, "./test_data/rf_test_data/data_%s.pkl"%stock_id)
+data_dict_path = join(parent_dir, "./test_data/rf_test_data/data_dict_%s.pkl"%stock_id)
+test_rewards_path = join(parent_dir, "./test_data/rf_test_data/test_rewards_%s.pkl"%stock_id)
 moving_average_number = 1000  # number of time interval for calculating moving average
 
 
