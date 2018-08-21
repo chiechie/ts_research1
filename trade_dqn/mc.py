@@ -12,7 +12,7 @@ import mpl_toolkits.mplot3d
 #------------------------------------------------------------------------------
 class RLMomentum(object):
     def __init__(self, datapath):
-        self.data = pd.read_csv(datapath, header=None)
+        self.data = pd.read_csv(datapath, header=None)["Close"]
         self.ret = self.data / self.data.shift(1) - 1
         self.ret = self.ret.fillna(0)
        
@@ -130,5 +130,7 @@ class RLMomentum(object):
 #------------------------------------------------------------------------------
 # MAIN
 #------------------------------------------------------------------------------
-m = RLMomentum("usdjpy.csv")
+from settings import Config_json, get_user_data_dir, data_path, data_dict_path, supervised_y_data_path, test_rewards_path,raw_data_file
+
+m = RLMomentum(raw_data_file)
 m.monteCarlo()
