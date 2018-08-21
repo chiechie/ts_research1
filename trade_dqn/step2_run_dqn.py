@@ -9,7 +9,7 @@ try:
 except:
     import _pickle as pickle
 # My Library
-from common.path_helper import load_data, loadPklfrom, list_md5_string_value
+from common.path_helper import load_data, loadPklfrom, list_md5_string_value,savePklto
 from settings import Config_json, get_user_data_dir, data_path, data_dict_path, supervised_y_data_path
 
 from trade_dqn.dqn_model import DQN
@@ -128,11 +128,8 @@ def main():
         avg_reward = sum(iteration_reward)  # / float(len(iteration_reward))
         # print(avg_reward)
         test_rewards[iter] = [iteration_reward, avg_reward]
-    for key, value in test_rewards.iteritems():
-        print(value[0])
-    for key, value in test_rewards.iteritems():
-        print(key)
-        print(value[1])
+    savePklto(test_rewards, test_rewards_path)
+    pass
 
 
 def env_stage_data(agent, step, episode_data, portfolio, portfolio_value, train):

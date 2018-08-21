@@ -14,6 +14,7 @@ raw_data_file = join(parent_dir, './test_data/ib/csv_data/AJP.csv')
 supervised_y_data_path = join(parent_dir, "./test_data/rf_test_data/supervised_data.pkl")
 data_path = join(parent_dir, "./test_data/rf_test_data/data.pkl")
 data_dict_path = join(parent_dir, "./test_data/rf_test_data/data_dict.pkl")
+test_rewards_path = join(parent_dir, "./test_data/rf_test_data/test_rewards.pkl")
 moving_average_number = 1000  # number of time interval for calculating moving average
 
 
