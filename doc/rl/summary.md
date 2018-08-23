@@ -25,3 +25,6 @@ http://keras-rl.readthedocs.io/en/latest/
 
 
 
+## course
+
+https://www.coursera.org/learn/reinforcement-learning-in-finance/resources/mpfNX
