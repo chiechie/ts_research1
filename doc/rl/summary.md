@@ -20,6 +20,7 @@ https://github.com/keras-rl/keras-rl
 
 http://keras-rl.readthedocs.io/en/latest/
 
+https://github.com/chiechie/QLearning_Trading.git
 
 [代码质量差不推荐]https://github.com/deependersingla/deep_trader.git
 
